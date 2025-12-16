@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-app
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: test-app
+  template:
+    metadata:
+      labels:
+        app: test-app
+    spec:
+      containers:
+        - name: test-app
+          image: 200901485389.dkr.ecr.ap-south-1.amazonaws.com/rapy-ecr:latest1
+          ports:
+            - containerPort: 80
