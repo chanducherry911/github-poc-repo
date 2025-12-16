@@ -15,22 +15,26 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:15
+        image: postgres:14
         ports:
         - containerPort: 5432
-        envFrom:
-        - secretRef:
-            name: postgres-secret
+        env:
+        - name: POSTGRES_DB
+          value: appdb
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
         volumeMounts:
-        - name: postgres-data
+        - name: postgres-storage
           mountPath: /var/lib/postgresql/data
-  volumeClaimTemplates:
-  - metadata:
-      name: postgres-data
-    spec:
-      accessModes:
-        - ReadWriteMany
-      storageClassName: efs-sc
-      resources:
-        requests:
-          storage: 5Gi
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: efs-pvc
